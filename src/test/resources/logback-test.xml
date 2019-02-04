@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+	<include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+	<logger name="org.samples.microservices.sample" level="error"/>
+	<logger name="org.springframework" level="error"/>
+	<logger name="springfox" level="error"/>
+	<logger name="org.xnio" level="error"/>
+	<logger name="io.undertow" level="error"/>
+	<logger name="com.zaxxer" level="error"/>
+	<logger name="org.hibernate" level="error"/>
+	<logger name="wiremock" level="error"/>
+	<logger name="com.github" level="error"/>
+	<logger name="wiremock.org" level="error"/>
+	<logger name="WireMock" level="warn"/>
+	<!-- wiremock endpoints -->
+	<logger name="/" level="warn"/>
+	<logger name="/__admin" level="warn"/>
+</configuration>

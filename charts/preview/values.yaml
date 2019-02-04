@@ -1,0 +1,31 @@
+
+expose:
+  Annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: hook-succeeded
+  config:
+    exposer: Ingress
+    http: true
+    tlsacme: false
+
+cleanup:
+  Args:
+    - --cleanup
+  Annotations:
+    helm.sh/hook: pre-delete
+    helm.sh/hook-delete-policy: hook-succeeded
+
+preview:
+  image:
+    repository:
+    tag:
+    pullPolicy: IfNotPresent
+
+# ISSUE: request with a really large body receive an error like "413 Request Entity Too Large 413 Request Entity Too Large nginx/1.13.12"
+# SOLUTION: add an annotation to the k8s ingress definition in order to increase rest requests body size (default should be 8m)
+# SOLUTION-METHOD-2 (see SOLUTION-METHOD-1 in file ../sample-service/values.yml)
+#sample-service:
+#  service:
+#    annotations:
+#      fabric8.io/ingress.annotations: |-
+#        nginx.ingress.kubernetes.io/proxy-body-size: 24m

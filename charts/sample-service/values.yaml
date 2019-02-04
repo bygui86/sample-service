@@ -1,0 +1,49 @@
+# Default values for Maven projects.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+image:
+  repository: draft
+  tag: dev
+  pullPolicy: IfNotPresent
+service:
+  name: sample-service
+  type: ClusterIP
+  externalPort: 80
+  internalPort: 8080
+  annotations:
+    fabric8.io/expose: "true"
+    # ISSUE: request with a really large body receive an error like "413 Request Entity Too Large 413 Request Entity Too Large nginx/1.13.12"
+    # SOLUTION: add an annotation to the k8s ingress definition in order to increase rest requests body size (default should be 8m)
+    # SOLUTION-METHOD-1 (see SOLUTION-METHOD-2 in file ../preview/values.yml)
+    #    ORIGIN
+    #    fabric8.io/ingress.annotations: "kubernetes.io/ingress.class: nginx"
+    #    CUSTOM
+    fabric8.io/ingress.annotations: |-
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/proxy-body-size: 24m
+resources:
+  limits:
+    cpu: 1800m
+    memory: 1000Mi
+  requests:
+    cpu: 600m
+    memory: 768Mi
+probePath: /actuator/health
+probePort: 8090
+livenessProbe:
+  # PLEASE NOTE:
+  # I was forced to increase the initial liveness delay, because the application start takes around 85sec.
+  # In this way kubernetes avoid to restart the container thinking that the application is not working properly.
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+readinessProbe:
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+terminationGracePeriodSeconds: 10
+jvm:
+  heapSize: 256m
+  metaSize: 128m
